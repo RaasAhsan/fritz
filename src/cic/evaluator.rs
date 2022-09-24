@@ -1,4 +1,4 @@
-use super::{ConstantName, Declaration, GlobalEnvironment, Term};
+use super::{checker::typecheck, ConstantName, GlobalEnvironment, LocalContext, Term};
 
 #[derive(Debug)]
 pub struct Evaluator {
@@ -16,6 +16,7 @@ impl Evaluator {
         if self.global.contains_declaration(&name) {
             panic!("A declaration with name {:?} already exists", name);
         }
+        typecheck(ty.clone(), &self.global, LocalContext::new());
         self.global.declare_assumption(name, ty);
     }
 
@@ -23,6 +24,7 @@ impl Evaluator {
         if self.global.contains_declaration(&name) {
             panic!("A declaration with name {:?} already exists", name);
         }
+        typecheck(ty.clone(), &self.global, LocalContext::new());
         self.global.declare_definition(name, term, ty);
     }
 }

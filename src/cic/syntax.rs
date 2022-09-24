@@ -12,6 +12,10 @@ pub fn prop() -> Term {
     Term::Prop
 }
 
+pub fn type_term() -> Term {
+    Term::Type
+}
+
 pub fn forall(name: VarName, ty: Term, term: Term) -> Term {
     Term::Forall(Some(name), Box::new(ty), Box::new(term))
 }
