@@ -2,6 +2,8 @@
 
 Fritz is an interactive theorem prover / proof assistant based on the Calculus of Inductive Constructions (CoIC), the formal system underlying the Coq proof assistant.
 
+At the moment, Fritz expressions can only be constructed via Rust. A language frontend and an accompanying REPL will be implemented.
+
 ## Example: natural number equality
 
 ```rust
