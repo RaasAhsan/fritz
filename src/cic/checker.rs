@@ -1,4 +1,4 @@
-use super::{GlobalEnvironment, LocalContext, Term};
+use super::{GlobalEnvironment, LocalContext, Term, VarName};
 
 fn typecheck(term: Term, global: GlobalEnvironment, local: LocalContext) -> Term {
     match term {
@@ -28,14 +28,14 @@ fn typecheck(term: Term, global: GlobalEnvironment, local: LocalContext) -> Term
             Term::Forall(name, ty, Box::new(tty))
         }
         Term::App(t1, t2) => {
-            if let Term::Abs(name, ty, body) = typecheck(*t1, global.clone(), local.clone()) {
-                let t2ty = typecheck(*t2.clone(), global.clone(), local.clone());
-                if t2ty == *ty {
-                    let mut next_local = local;
-                    if let Some(n) = &name {
-                        next_local.declare_assumption(n.clone(), t2ty);
+            if let Term::Forall(name, aty, rty) = typecheck(*t1, global.clone(), local.clone()) {
+                let t2ty = typecheck(*t2.clone(), global, local);
+                if t2ty == *aty {
+                    let mut tty = rty;
+                    if let Some(n) = name {
+                        tty.substitute_var(n, *t2);
                     }
-                    typecheck(*body, global, next_local)
+                    *tty
                 } else {
                     panic!("Types did not match");
                 }

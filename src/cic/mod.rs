@@ -16,6 +16,27 @@ pub enum Term {
     App(Box<Term>, Box<Term>),
 }
 
+impl Term {
+    fn substitute_var(&mut self, name: VarName, term: Term) {
+        match self {
+            Term::Var(n) if *n == name => *n = name,
+            Term::Forall(_, t1, t2) => {
+                t1.substitute_var(name.clone(), term.clone());
+                t2.substitute_var(name, term);
+            }
+            Term::Abs(_, t1, t2) => {
+                t1.substitute_var(name.clone(), term.clone());
+                t2.substitute_var(name, term);
+            }
+            Term::App(t1, t2) => {
+                t1.substitute_var(name.clone(), term.clone());
+                t2.substitute_var(name, term);
+            }
+            _ => {}
+        }
+    }
+}
+
 impl From<ConstantName> for Term {
     fn from(name: ConstantName) -> Term {
         Term::Constant(name)
