@@ -5,7 +5,7 @@ pub mod checker;
 pub mod evaluator;
 pub mod syntax;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Term {
     Prop,
     Type,
@@ -32,7 +32,7 @@ pub type GlobalEnvironment = Context<ConstantName>;
 pub type LocalContext = Context<VarName>;
 
 /// A context represents a global environment or a local context.
-#[derive(Debug, Default)]
+#[derive(Clone, Debug, Default)]
 pub struct Context<K> {
     declarations: HashMap<K, Declaration>,
 }
@@ -70,7 +70,7 @@ where
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum Declaration {
     Assumption(Term),
     Definition(Term, Term),
