@@ -2,6 +2,7 @@ use std::collections::HashMap;
 use std::hash::Hash;
 
 pub mod checker;
+pub mod evaluator;
 pub mod syntax;
 
 #[derive(Clone, Debug)]
@@ -30,6 +31,7 @@ pub enum Sort {
 pub type GlobalEnvironment = Context<ConstantName>;
 pub type LocalContext = Context<VarName>;
 
+/// A context represents a global environment or a local context.
 #[derive(Debug, Default)]
 pub struct Context<K> {
     declarations: HashMap<K, Declaration>,
