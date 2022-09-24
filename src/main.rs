@@ -1,4 +1,4 @@
-use wright::cic::{
+use fritz::cic::{
     evaluator::Evaluator,
     syntax::{app, constant, constant_term, forall, function, prop, var, var_term},
     Term,
