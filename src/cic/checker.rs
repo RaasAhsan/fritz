@@ -79,6 +79,18 @@ mod tests {
     #[test]
     fn local_type() {
         let mut global = GlobalEnvironment::new();
+        let mut local = LocalContext::new();
+        global.declare_assumption(constant("nat"), type_term());
+        local.declare_assumption(var("x"), constant_term("nat"));
+        assert_eq!(
+            typecheck(var_term("x"), &global, local),
+            constant_term("nat")
+        );
+    }
+
+    #[test]
+    fn universal_type() {
+        let mut global = GlobalEnvironment::new();
         global.declare_assumption(constant("nat"), type_term());
         global.declare_assumption(
             constant("id"),
