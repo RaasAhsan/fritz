@@ -24,7 +24,8 @@ impl Evaluator {
         if self.global.contains_declaration(&name) {
             panic!("A declaration with name {:?} already exists", name);
         }
-        typecheck(ty.clone(), &self.global, LocalContext::new());
+        let rty = typecheck(term.clone(), &self.global, LocalContext::new());
+        assert_eq!(ty, rty);
         self.global.declare_definition(name, term, ty);
     }
 }

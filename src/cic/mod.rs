@@ -19,7 +19,7 @@ pub enum Term {
 impl Term {
     fn substitute_var(&mut self, name: VarName, term: Term) {
         match self {
-            Term::Var(n) if *n == name => *n = name,
+            Term::Var(n) if *n == name => *self = term,
             Term::Forall(_, t1, t2) => {
                 t1.substitute_var(name.clone(), term.clone());
                 t2.substitute_var(name, term);
@@ -40,6 +40,12 @@ impl Term {
 impl From<ConstantName> for Term {
     fn from(name: ConstantName) -> Term {
         Term::Constant(name)
+    }
+}
+
+impl From<VarName> for Term {
+    fn from(name: VarName) -> Term {
+        Term::Var(name)
     }
 }
 

@@ -49,7 +49,7 @@ pub fn typecheck(term: Term, global: &GlobalEnvironment, local: LocalContext) ->
 #[cfg(test)]
 mod tests {
     use crate::cic::{
-        syntax::{constant, constant_term, type_term},
+        syntax::{app, constant, constant_term, forall, function, type_term, var, var_term},
         GlobalEnvironment, LocalContext,
     };
 
@@ -73,6 +73,28 @@ mod tests {
         assert_eq!(
             typecheck(constant_term("z"), &global, LocalContext::new()),
             constant_term("nat")
+        );
+    }
+
+    #[test]
+    fn local_type() {
+        let mut global = GlobalEnvironment::new();
+        global.declare_assumption(constant("nat"), type_term());
+        global.declare_assumption(
+            constant("id"),
+            forall(
+                var("A"),
+                type_term(),
+                function(var_term("A"), var_term("A")),
+            ),
+        );
+        assert_eq!(
+            typecheck(
+                app(constant_term("id"), constant_term("nat")),
+                &global,
+                LocalContext::new()
+            ),
+            function(constant_term("nat"), constant_term("nat"))
         );
     }
 }
