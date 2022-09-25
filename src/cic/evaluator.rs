@@ -1,4 +1,6 @@
-use super::{checker::typecheck, ConstantName, GlobalEnvironment, LocalContext, Term};
+use crate::cic::checker::typecheck_closed;
+
+use super::{ConstantName, GlobalEnvironment, Term};
 
 #[derive(Debug)]
 pub struct Evaluator {
@@ -16,7 +18,7 @@ impl Evaluator {
         if self.global.contains_declaration(&name) {
             panic!("A declaration with name {:?} already exists", name);
         }
-        typecheck(ty.clone(), &self.global, LocalContext::new());
+        typecheck_closed(ty.clone(), &self.global);
         self.global.declare_assumption(name, ty);
     }
 
@@ -24,7 +26,7 @@ impl Evaluator {
         if self.global.contains_declaration(&name) {
             panic!("A declaration with name {:?} already exists", name);
         }
-        let rty = typecheck(term.clone(), &self.global, LocalContext::new());
+        let rty = typecheck_closed(term.clone(), &self.global);
         assert_eq!(ty, rty);
         self.global.declare_definition(name, term, ty);
     }
