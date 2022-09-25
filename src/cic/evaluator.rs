@@ -14,12 +14,13 @@ impl Evaluator {
         }
     }
 
-    pub fn declare_assumption(&mut self, name: ConstantName, ty: Term) {
+    pub fn declare_assumption(&mut self, name: ConstantName, ty: Term) -> Term {
         if self.global.contains_declaration(&name) {
             panic!("A declaration with name {:?} already exists", name);
         }
         typecheck_closed(ty.clone(), &self.global);
-        self.global.declare_assumption(name, ty);
+        self.global.declare_assumption(name.clone(), ty);
+        Term::Constant(name)
     }
 
     pub fn declare_definition(&mut self, name: ConstantName, term: Term, ty: Term) {
