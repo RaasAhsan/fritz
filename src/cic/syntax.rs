@@ -16,7 +16,7 @@ pub fn var_term<T: AsRef<str>>(name: T) -> Term {
     var(name).into()
 }
 
-pub fn prop() -> Term {
+pub fn prop_term() -> Term {
     Term::Prop
 }
 

@@ -35,7 +35,7 @@ pub fn typecheck(term: &Term, global: &GlobalEnvironment, local: &LocalContext) 
             if tty == Term::Prop {
                 Term::Prop
             } else {
-                panic!("Invalid sort")
+                Term::Type
             }
         }
         Term::Abs(name, ty, term) => {
@@ -69,7 +69,9 @@ pub fn typecheck(term: &Term, global: &GlobalEnvironment, local: &LocalContext) 
 mod tests {
     use crate::cic::{
         checker::typecheck_closed,
-        syntax::{app, constant, constant_term, forall, function, type_term, var, var_term},
+        syntax::{
+            app, constant, constant_term, forall, function, prop_term, type_term, var, var_term,
+        },
         GlobalEnvironment, LocalContext,
     };
 
@@ -123,6 +125,27 @@ mod tests {
         assert_eq!(
             typecheck_closed(&app(constant_term("id"), constant_term("nat")), &global,),
             function(constant_term("nat"), constant_term("nat"))
+        );
+    }
+
+    #[test]
+    fn universal_prop() {
+        let mut global = GlobalEnvironment::new();
+        global.declare_assumption(constant("nat"), type_term());
+        global.declare_assumption(
+            constant("eqzero"),
+            forall(var("n"), constant_term("nat"), prop_term()),
+        );
+        assert_eq!(
+            typecheck_closed(
+                &forall(
+                    var("n"),
+                    constant_term("nat"),
+                    app(constant_term("eqzero"), var_term("n"))
+                ),
+                &global,
+            ),
+            prop_term()
         );
     }
 }

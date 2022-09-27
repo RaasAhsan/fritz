@@ -1,6 +1,6 @@
 use fritz::cic::{
     evaluator::Evaluator,
-    syntax::{app, constant, forall, function, prop, var, var_term},
+    syntax::{app, constant, forall, function, prop_term, var, var_term},
     Term,
 };
 
@@ -11,7 +11,7 @@ fn main() {
     let s = eval.declare_assumption(constant("s"), function(type_nat.clone(), type_nat.clone()));
     let eqnat = eval.declare_assumption(
         constant("eqnat"),
-        function(type_nat.clone(), function(type_nat.clone(), prop())),
+        function(type_nat.clone(), function(type_nat.clone(), prop_term())),
     );
     let eqnat_refl = eval.declare_assumption(
         constant("eqnat_refl"),
