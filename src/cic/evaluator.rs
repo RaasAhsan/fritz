@@ -18,7 +18,7 @@ impl Evaluator {
         if self.global.contains_declaration(&name) {
             panic!("A declaration with name {:?} already exists", name);
         }
-        typecheck_closed(ty.clone(), &self.global);
+        typecheck_closed(&ty, &self.global);
         self.global.declare_assumption(name.clone(), ty);
         Term::Constant(name)
     }
@@ -27,7 +27,7 @@ impl Evaluator {
         if self.global.contains_declaration(&name) {
             panic!("A declaration with name {:?} already exists", name);
         }
-        let rty = typecheck_closed(term.clone(), &self.global);
+        let rty = typecheck_closed(&term, &self.global);
         assert_eq!(ty, rty);
         self.global.declare_definition(name, term, ty);
     }
