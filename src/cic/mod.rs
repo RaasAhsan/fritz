@@ -35,6 +35,45 @@ impl Term {
             _ => {}
         }
     }
+
+    pub fn print(&self, left: bool) -> String {
+        match self {
+            Term::Prop => "Prop".to_string(),
+            Term::Type => "Type".to_string(),
+            Term::Var(name) => name.0.clone(),
+            Term::Constant(name) => name.0.clone(),
+            Term::Forall(name, ty, body) => {
+                let acc = if let Some(n) = name {
+                    format!(
+                        "forall {}: {}. {}",
+                        n.0.clone(),
+                        ty.print(false),
+                        body.print(false)
+                    )
+                } else {
+                    format!("{} -> {}", ty.print(true), body.print(false))
+                };
+                if left {
+                    format!("({})", acc)
+                } else {
+                    acc
+                }
+            }
+            Term::Abs(name, ty, body) => {
+                if let Some(n) = name {
+                    format!(
+                        "\\{}: {} -> {}",
+                        n.0.clone(),
+                        ty.print(true),
+                        body.print(false)
+                    )
+                } else {
+                    format!("{} -> {}", ty.print(true), body.print(false))
+                }
+            }
+            Term::App(t1, t2) => format!("({} {})", t1.print(false), t2.print(false)),
+        }
+    }
 }
 
 impl From<ConstantName> for Term {

@@ -31,6 +31,11 @@ impl Evaluator {
         assert_eq!(ty, rty);
         self.global.declare_definition(name, term, ty);
     }
+
+    pub fn check(&self, term: &Term) {
+        let ty = typecheck_closed(term, &self.global);
+        println!("{}: {}", term.print(false), ty.print(false));
+    }
 }
 
 impl Default for Evaluator {
