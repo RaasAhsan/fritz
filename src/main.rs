@@ -21,6 +21,31 @@ fn main() {
             app(app(eqnat.clone(), var_term("n")), var_term("n")),
         ),
     );
+    let nat_ind = eval.declare_assumption(
+        constant("nat_ind"),
+        forall(
+            var("P"),
+            function(type_nat.clone(), prop_term()),
+            function(
+                app(var_term("P"), z.clone()),
+                function(
+                    forall(
+                        var("n"),
+                        type_nat.clone(),
+                        function(
+                            app(var_term("P"), var_term("n")),
+                            app(var_term("P"), app(s.clone(), var_term("n"))),
+                        ),
+                    ),
+                    forall(
+                        var("n"),
+                        type_nat.clone(),
+                        app(var_term("P"), var_term("n")),
+                    ),
+                ),
+            ),
+        ),
+    );
     eval.declare_definition(
         constant("eqnat_0"),
         app(eqnat_refl.clone(), z.clone()),
