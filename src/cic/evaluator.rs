@@ -32,9 +32,12 @@ impl Evaluator {
         self.global.declare_definition(name, term, ty);
     }
 
-    pub fn check(&self, term: &Term) {
-        let ty = typecheck_closed(term, &self.global);
-        println!("{}: {}", term.print(false), ty.print(false));
+    pub fn check(&self) {
+        for (name, _) in self.global.iter().rev() {
+            let term = Term::Constant(name.clone());
+            let ty = typecheck_closed(&term, &self.global);
+            println!("{}: {}", term.print(false), ty.print(false));
+        }
     }
 }
 

@@ -1,5 +1,7 @@
-use std::collections::HashMap;
-use std::hash::Hash;
+use std::{
+    collections::{vec_deque::Iter, VecDeque},
+    hash::Hash,
+};
 
 pub mod checker;
 pub mod evaluator;
@@ -100,13 +102,13 @@ pub type LocalContext = Context<VarName>;
 /// A context represents a global environment or a local context.
 #[derive(Clone, Debug, Default)]
 pub struct Context<K> {
-    declarations: HashMap<K, Declaration>,
+    declarations: VecDeque<(K, Declaration)>,
 }
 
 impl<K> Context<K> {
     pub fn new() -> Self {
         Context {
-            declarations: HashMap::new(),
+            declarations: VecDeque::new(),
         }
     }
 }
@@ -124,15 +126,49 @@ where
     }
 
     pub fn get_declaration(&self, name: &K) -> Option<&Declaration> {
-        self.declarations.get(name)
+        for (key, decl) in self.declarations.iter() {
+            if key.eq(name) {
+                return Some(decl);
+            }
+        }
+        None
     }
 
     pub fn contains_declaration(&self, name: &K) -> bool {
-        self.declarations.contains_key(name)
+        for (key, _) in self.declarations.iter() {
+            if key.eq(name) {
+                return true;
+            }
+        }
+        false
     }
 
     fn add_declaration(&mut self, name: K, decl: Declaration) {
-        self.declarations.insert(name, decl);
+        self.declarations.push_front((name, decl));
+    }
+
+    pub fn iter<'a>(&'a self) -> ContextIter<'a, K> {
+        ContextIter {
+            inner: self.declarations.iter(),
+        }
+    }
+}
+
+pub struct ContextIter<'a, K> {
+    inner: Iter<'a, (K, Declaration)>,
+}
+
+impl<'a, K> Iterator for ContextIter<'a, K> {
+    type Item = &'a (K, Declaration);
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.inner.next()
+    }
+}
+
+impl<'a, K> DoubleEndedIterator for ContextIter<'a, K> {
+    fn next_back(&mut self) -> Option<Self::Item> {
+        self.inner.next_back()
     }
 }
 
@@ -142,8 +178,24 @@ pub enum Declaration {
     Definition(Term, Term),
 }
 
+trait Binding {
+    fn name(&self) -> String;
+}
+
 #[derive(Debug, PartialEq, Hash, Eq, Clone)]
 pub struct ConstantName(String);
 
+impl Binding for ConstantName {
+    fn name(&self) -> String {
+        self.0.clone()
+    }
+}
+
 #[derive(Clone, Debug, Hash, Eq, PartialEq)]
 pub struct VarName(String);
+
+impl Binding for VarName {
+    fn name(&self) -> String {
+        self.0.clone()
+    }
+}

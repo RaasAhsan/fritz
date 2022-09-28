@@ -46,10 +46,10 @@ fn main() {
             ),
         ),
     );
-    eval.check(&nat_ind);
     eval.declare_definition(
         constant("eqnat_0"),
         app(eqnat_refl.clone(), z.clone()),
         app(app(eqnat.clone(), z.clone()), z.clone()),
     );
+    eval.check();
 }
